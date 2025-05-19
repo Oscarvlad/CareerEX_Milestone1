@@ -1,16 +1,39 @@
-const mongoose = require("mongoose");
+// models/Wallet.js
+const mongoose = require('mongoose');
 
-// Define the Wallet schema
-const walletSchema = new mongoose.Schema({
-    balance: {
-        type: Number,
-        default: 0, // Initial balance is 0
+const WalletSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    unique: true
+  },
+  balance: {
+    type: Number,
+    default: 0,
+    min: [0, 'Balance cannot be negative']
+  },
+  currency: {
+    type: String,
+    default: 'USD',
+    enum: ['USD', 'EUR', 'GBP']
+  },
+  transactions: [{
+    amount: Number,
+    type: {
+      type: String,
+      enum: ['deposit', 'withdrawal', 'transfer']
     },
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-    },
+    description: String,
+    date: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
-// Create and export the Wallet model
-module.exports = mongoose.model("Wallet", walletSchema);
+module.exports = mongoose.model('Wallet', WalletSchema);
